@@ -1,3 +1,3 @@
 # Wattpad copy bot
 
-Need geckdriver and installed firefox to run.
+Need geckodriver and installed firefox to run.
