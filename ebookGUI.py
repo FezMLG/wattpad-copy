@@ -1,10 +1,12 @@
 import shutil
+import time
 from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from bcolors import bcolors
+from selenium.webdriver import ActionChains
 from ebooklib import epub
+from bcolors import bcolors
 
 import tkinter as tk
 from tkinter import filedialog, Text, Label, Entry
@@ -16,8 +18,11 @@ root.title("WattCopy")
 
 def main_app():
     headers = {
-        "User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                      'Chrome/90.0.4430.212 Safari/537.36'}
+        "User-Agent": 'Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/67.0.3396.87 Mobile Safari/537.36'
+    }
+
+    user_agent = 'Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/67.0.3396.87 Mobile Safari/537.36'
+
 
     # print(bcolors.LightMagenta + "Podaj link do opowiadania: " + bcolors.ResetAll)
     # start_url = input()
@@ -27,10 +32,13 @@ def main_app():
 
     print("Przygotowywanie")
     try:
-        browser = webdriver.Firefox()
+        profile = webdriver.FirefoxProfile()
+        profile.set_preference('general.useragent.override', user_agent)
+
+        browser = webdriver.Firefox(firefox_profile=profile)
         browser.get(url)
         html_source = browser.page_source
-        browser.quit()
+        # browser.quit()
     except:
         print(bcolors.Red + "Złe url!" + bcolors.ResetAll)
         browser.quit()
@@ -42,6 +50,27 @@ def main_app():
     book_title = soup.find(class_="story-info__title").get_text().strip()
     author = soup.find("div", class_="author-info__username").get_text().strip()
     print("Tytuł książki:", book_title, "by", author)
+
+    def loadFullPage(soup, browser):
+        SCROLL_PAUSE_TIME = 0.5
+
+        # Get scroll height
+        last_height = browser.execute_script("return document.body.scrollHeight")
+
+        while True:
+            # Scroll down to bottom
+            browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+            # Wait to load page
+            time.sleep(SCROLL_PAUSE_TIME)
+
+            # Calculate new scroll height and compare with last scroll height
+            new_height = browser.execute_script("return document.body.scrollHeight")
+            if new_height == last_height:
+                break
+            last_height = new_height
+        print("yo wtf")
+
 
     def getChapterTitle(soup):
         title_div = soup.find(class_="row part-header")
@@ -171,6 +200,7 @@ def main_app():
         #     br.replace_with("\n")
 
         title = getChapterTitle(soup)
+        loadFullPage(soup, browser)
         text = getText(soup)
         print("Dodawanie:", title)
         chapter = generateChapter(title=title, text=text, style=default_css)
