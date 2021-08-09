@@ -1,3 +1,3 @@
 # Wattpad copy bot
 
-Need geckodriver and installed firefox to run.
+ebookNEW uses wattpad api to download books
