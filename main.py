@@ -1,5 +1,4 @@
 import argparse
-import tkinter as tk
 import bs4
 import requests
 import re
@@ -13,8 +12,6 @@ from random_user_agent.params import SoftwareName, OperatingSystem
 
 def main():
 
-    book = epub.EpubBook()
-
     parser = argparse.ArgumentParser(
         description="Download stories from wattpad.com and store them as"
                     " epub.",
@@ -27,8 +24,12 @@ def main():
 
     args = parser.parse_args()
 
+    # taking arguments from cl
     address = args.initial_url[0]
     address.strip()
+
+    # generating new book
+    book = epub.EpubBook()
 
     # Using regex to get ID
     search_id = re.compile(r'\d{9,}')
