@@ -254,10 +254,10 @@ Thumbs.db
 .prof
 
 #ebooks and jpges
-.epub
-.html
-.jpg
-.jpeg
+*.epub
+*.html
+*.jpg
+*.jpeg
 
 
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm
