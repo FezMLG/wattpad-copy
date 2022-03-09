@@ -21,12 +21,15 @@ def main():
 
     parser.add_argument('initial_url', metavar='initial_url', type=str,
                         nargs=1, help="Book's URL.")
+    parser.add_argument('-d', '--debug', action='store_true', default=False,
+                        help='print debug messages to stdout')
 
     args = parser.parse_args()
 
     # taking arguments from cl
     address = args.initial_url[0]
     address.strip()
+    debug = args.debug
 
     # generating new book
     book = epub.EpubBook()
@@ -63,7 +66,7 @@ def main():
     name = requests.utils.unquote(name)
     name = search_name.findall(name)
     story_name = string.capwords(' '.join(name[2:]))
-    print("Story name:" + story_name)
+    if debug: print("Story name:" + story_name)
 
     # add metadata
     book.set_identifier(story_name)
@@ -127,7 +130,7 @@ def main():
     # Looping through each chapter
     for i in range(len(chapters)):
         # getting the chapters using the ID
-        print("Getting Chapter", i + 1, "....")
+        if debug: print("Getting Chapter", i + 1, "....")
         story = requests.get("https://www.wattpad.com/apiv2/storytext?id=" + str(chapters[i]['ID']),
                              headers={'User-Agent': 'Mozilla/5.0'})
 
@@ -184,10 +187,13 @@ def main():
     book.spine = list_of_chapters
 
     # Output
-    print("Generating Epub...")
+    if debug: print("Generating Epub...")
     file_name = unidecode.unidecode(story_name.replace(" ", "_"))
     epub.write_epub(file_name + '.epub', book, {})
-    print("saved " + file_name + ".epub")
+    if debug:
+        print("saved " + file_name + ".epub")
+    else:
+        print(file_name + ".epub")
 
 
 if __name__ == "__main__":
