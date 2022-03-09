@@ -5,13 +5,13 @@ import re
 import string
 import os
 from ebooklib import epub
+import unidecode
 
 from random_user_agent.user_agent import UserAgent
 from random_user_agent.params import SoftwareName, OperatingSystem
 
 
 def main():
-
     parser = argparse.ArgumentParser(
         description="Download stories from wattpad.com and store them as"
                     " epub.",
@@ -37,10 +37,11 @@ def main():
 
     # getting json data from Wattpad api
 
-    software_names = [SoftwareName.CHROME.value]
-    operating_systems = [OperatingSystem.WINDOWS.value, OperatingSystem.LINUX.value]
-    user_agent_rotator = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=100)
-    user_agent = user_agent_rotator.get_random_user_agent()
+    # software_names = [SoftwareName.CHROME.value]
+    # operating_systems = [OperatingSystem.WINDOWS.value, OperatingSystem.LINUX.value]
+    # user_agent_rotator = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=100)
+    # user_agent = user_agent_rotator.get_random_user_agent()
+    user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3359.181 Safari/537.36"
     res = requests.get("https://www.wattpad.com/apiv2/info?id=" + id_no.group(),
                        headers={'User-Agent': user_agent})
 
@@ -184,8 +185,9 @@ def main():
 
     # Output
     print("Generating Epub...")
-    epub.write_epub(story_name + '.epub', book, {})
-    print("saved " + story_name + ".epub")
+    file_name = unidecode.unidecode(story_name.replace(" ", "_"))
+    epub.write_epub(file_name + '.epub', book, {})
+    print("saved " + file_name + ".epub")
 
 
 if __name__ == "__main__":

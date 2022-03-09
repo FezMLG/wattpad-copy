@@ -4,6 +4,8 @@ import requests
 import re
 import string
 import os
+
+import unidecode
 from ebooklib import epub
 
 from random_user_agent.user_agent import UserAgent
@@ -175,9 +177,10 @@ def main():
 
         # Output
         print("Generating Epub...")
-        epub.write_epub(story_name + '.epub', book, {})
-        print("saved " + story_name + ".epub")
-        tk.Label(frame, text="saved " + story_name + ".epub").pack()
+        file_name = unidecode.unidecode(story_name.replace(" ", "_"))
+        epub.write_epub(file_name + '.epub', book, {})
+        print("saved " + file_name + ".epub")
+        tk.Label(frame, text="saved " + file_name + ".epub").pack()
 
     canvas = tk.Canvas(root, height=480, width=640, bg="#263D42")
     canvas.pack()
